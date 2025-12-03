@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Expense Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<h1>📈 Expense Prediction</h1>
+
+<div class="card">
+    <h2>Predicted Expense for {{ next_month }}</h2>
+    <p style="font-size: 24px; font-weight: bold; color: green;">
+        ₹ {{ predicted_amount }}
+    </p>
+</div>
+
+<h3>Past Monthly Spending</h3>
+<table border="1" cellpadding="8">
+    <tr>
+        <th>Month</th>
+        <th>Total Expense (₹)</th>
+    </tr>
+
+    {% for row in history %}
+    <tr>
+        <td>{{ row.month }}</td>
+        <td>{{ row.amount }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<br><br>
+<a href="/" class="btn">⬅ Back to Home</a>
+
+</body>
+</html>

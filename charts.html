@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Expense Charts</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container" style="max-width: 800px; margin: auto; padding: 20px;">
+    <h1>📊 Financial Charts</h1>
+
+    <!-- Bar Chart for Income vs Expense -->
+    <h2>Income vs Expense</h2>
+    <canvas id="incomeExpenseChart" width="400" height="200"></canvas>
+
+    <!-- Pie Chart for Expense by Category -->
+    <h2 style="margin-top: 40px;">Expenses by Category</h2>
+    <canvas id="categoryChart" width="400" height="400"></canvas>
+
+    <br><a href="{{ url_for('index') }}">← Back to Home</a>
+  </div>
+    <script>
+  // Bar Chart: Income vs Expense
+  const incomeExpenseCtx = document.getElementById('incomeExpenseChart').getContext('2d');
+  new Chart(incomeExpenseCtx, {
+    type: 'bar',
+    data: {
+      labels: ['Income', 'Expense'],
+      datasets: [{
+        label: 'Amount',
+        data: [({{ income | tojson | safe }}), ({{ expense | tojson | safe }})],
+        backgroundColor: ['green', 'red']
+      }]
+    },
+    options: {
+      scales: { y: { beginAtZero: true } },
+      responsive: true
+    }
+  });
+
+  // Pie Chart: Expenses by Category
+  const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+  new Chart(categoryCtx, {
+    type: 'pie',
+    data: {
+      labels: {{ labels | tojson | safe }},
+      datasets: [{
+        label: 'Spending by Category',
+        data: {{ amounts | tojson | safe }},
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.6)',
+          'rgba(54, 162, 235, 0.6)',
+          'rgba(255, 206, 86, 0.6)',
+          'rgba(75, 192, 192, 0.6)',
+          'rgba(153, 102, 255, 0.6)',
+          'rgba(255, 159, 64, 0.6)',
+          'rgba(100, 100, 255, 0.6)'
+        ],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: 'right' } }
+    }
+  });
+  </script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+</html>
