@@ -6,6 +6,3 @@ try:
         print("✅ Column 'type' added successfully.")
 except sqlite3.OperationalError as e:
     print("⚠️ Error:", e)
-
-
-
