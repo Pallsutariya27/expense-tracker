@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, Response
 import sqlite3
 import csv
-from sklearn.linear_model import LinearRegression
 import numpy as np
 import pandas as pd
 from datetime import datetime
@@ -150,40 +149,33 @@ def export_csv():
         headers={"Content-Disposition": "attachment;filename=expenses.csv"}
     )
 
-# ---------------------- PREDICTION ----------------------
+# ---------------------- PREDICTION (NumPy instead of sklearn) ----------------------
 @app.route("/predict", methods=["GET", "POST"])
 def predict():
     conn = sqlite3.connect("expenses.db")
     df = pd.read_sql_query("SELECT amount, date FROM expenses", conn)
     conn.close()
 
-    # Convert date to datetime
     if not df.empty:
         df["date"] = pd.to_datetime(df["date"], errors="coerce")
 
-    # If no data → stop
     if df.empty or df["amount"].count() < 1:
         return render_template("predict.html",
                                prediction="Not enough data for prediction.")
 
-    # Extract numerical feature
     df["day"] = df["date"].dt.day
+    X = df["day"].values
+    y = df["amount"].values
 
-    X = df[["day"]]
-    y = df["amount"]
-
-    # Train model safely
     if len(X) < 1:
         return render_template("predict.html",
                                prediction="Not enough data to train prediction model.")
 
-    model = LinearRegression()
-    model.fit(X, y)
+    # Replace LinearRegression with numpy polyfit
+    slope, intercept = np.polyfit(X, y, 1)
 
-
-    # Predict next day
     next_day = df["day"].max() + 1
-    pred = model.predict([[next_day]])[0]
+    pred = slope * next_day + intercept
 
     return render_template("predict.html", prediction=round(pred, 2))
 
