@@ -1,47 +1,108 @@
+/* ---------- GENERAL ---------- */
 body {
   font-family: sans-serif;
   background: #f0f2f5;
-  padding: 2rem;
+  margin: 0;
+  padding: 0;
 }
+
+/* Main page layout: sidebar + content */
+.layout-container {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* ---------- SIDEBAR ---------- */
+.sidebar {
+  width: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 15px;
+  background: white;
+  height: fit-content;
+  border-radius: 12px;
+  box-shadow: 0 0 10px #ccc;
+}
+
+.sidebar a, .sidebar button {
+  padding: 10px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  background: #3498db;
+  color: white;
+  font-weight: 600;
+  border: none;
+  text-align: left;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+#theme-toggle {
+  background: #be97bc;
+  color: black;
+}
+
+/* ---------- MAIN CONTENT BOX ---------- */
 .container {
-  max-width: 800px;
-  margin: auto;
+  flex: 1;
+  max-width: 900px;
   background: white;
   padding: 2rem;
   border-radius: 10px;
   box-shadow: 0 0 10px #ccc;
 }
-form input, form button {
-  margin: 0.5rem 0;
-  padding: 0.5rem;
-  width: 100%;
+
+/* ---------- FORMS ---------- */
+form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
+
+form input, form select, form button {
+  padding: 10px;
+  flex: 1 1 180px;
+  min-width: 160px;
+}
+
 form button {
   background: #007bff;
   color: white;
   border: none;
+  cursor: pointer;
 }
+
+form button:hover {
+  opacity: 0.9;
+}
+
+/* ---------- TABLE ---------- */
+.table-wrapper {
+  overflow-x: auto;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 1rem;
 }
+
 table, th, td {
   border: 1px solid #ccc;
 }
+
 th, td {
   padding: 0.5rem;
   text-align: left;
 }
-form {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
 
+/* ---------- LINKS ---------- */
 a {
   color: #0066cc;
   font-weight: bold;
+  text-decoration: none;
 }
 
 a:hover {
@@ -54,17 +115,16 @@ body.dark-mode {
   color: #f1f1f1;
 }
 
-.dark-mode .card,
 .dark-mode .container,
-.dark-mode table {
+.dark-mode table,
+.dark-mode .sidebar {
   background-color: #1e1e1e;
   color: #fff;
   border-color: #333;
 }
 
 .dark-mode input,
-.dark-mode select,
-.dark-mode textarea {
+.dark-mode select {
   background-color: #2e2e2e;
   color: white;
   border: 1px solid #555;
@@ -74,41 +134,30 @@ body.dark-mode {
   color: #9ddcff;
 }
 
-.dark-mode button {
+.dark-mode button,
+.dark-mode .sidebar a {
   background-color: #333;
   color: white;
 }
 
-.top-buttons {
-  position: fixed;     /* stays on screen even while scrolling */
-  left: 50px;          /* distance from left screen edge */
-  top: 50px;          /* distance from top */
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  z-index: 999;        /* keep above other elements */
-}
+/* ---------- MEDIA QUERY ---------- */
+@media only screen and (max-width: 768px) {
+  .layout-container {
+    flex-direction: column;
+  }
 
-.top-buttons button,
-.top-buttons a {
-  padding: 10px 16px;
-  border-radius: 8px;
-  text-decoration: none;
-  background: #3498db;
-  color: white;
-  font-weight: 600;
-  border: none;
-}
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
 
+  form {
+    flex-direction: column;
+  }
 
-/* Fix Predict Expenses styling */
-.predict-btn {
-  background: #3498db;
-  color: white;
-  text-decoration: none;
-}
-
-#theme-toggle {
-  background: #be97bc;
-  color: black;
+  table th, table td {
+    font-size: 14px;
+    padding: 0.4rem;
+  }
 }
