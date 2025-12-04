@@ -1,1 +1,1 @@
-web: gunicorn app:app
+web: cd expense-tracker && gunicorn app:app
