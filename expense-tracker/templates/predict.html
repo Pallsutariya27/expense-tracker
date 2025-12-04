@@ -27,8 +27,8 @@
             </tr>
             {% for row in history %}
             <tr>
-                <td>{{ row.month }}</td>
-                <td>{{ row.amount }}</td>
+                <td>{{ row[0] }}</td> <!-- Month name -->
+                <td>₹{{ row[1] }}</td> <!-- Total expense -->
             </tr>
             {% endfor %}
         </table>

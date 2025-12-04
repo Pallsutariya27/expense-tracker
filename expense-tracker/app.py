@@ -150,34 +150,54 @@ def export_csv():
     )
 
 # ---------------------- PREDICTION (NumPy instead of sklearn) ----------------------
-@app.route("/predict", methods=["GET", "POST"])
+@app.route("/predict")
 def predict():
     conn = sqlite3.connect("expenses.db")
-    df = pd.read_sql_query("SELECT amount, date FROM expenses", conn)
+    df = pd.read_sql_query("SELECT amount, date FROM expenses WHERE type='expense'", conn)
     conn.close()
 
-    if not df.empty:
-        df["date"] = pd.to_datetime(df["date"], errors="coerce")
-
-    if df.empty or df["amount"].count() < 1:
+    if df.empty:
         return render_template("predict.html",
-                               prediction="Not enough data for prediction.")
+                               predicted_amount=0,
+                               next_month=datetime.now().strftime("%b %Y"),
+                               history=[])
 
-    df["day"] = df["date"].dt.day
-    X = df["day"].values
-    y = df["amount"].values
+    df["date"] = pd.to_datetime(df["date"], errors="coerce")
+    df = df.dropna()
 
-    if len(X) < 1:
+    if df.empty:
         return render_template("predict.html",
-                               prediction="Not enough data to train prediction model.")
+                               predicted_amount=0,
+                               next_month=datetime.now().strftime("%b %Y"),
+                               history=[])
 
-    # Replace LinearRegression with numpy polyfit
-    slope, intercept = np.polyfit(X, y, 1)
+    # Aggregate monthly totals
+    df["month"] = df["date"].dt.to_period("M")
+    monthly_data = df.groupby("month")["amount"].sum().reset_index()
+    monthly_data["month_str"] = monthly_data["month"].dt.strftime("%b %Y")
+    history = list(zip(monthly_data["month_str"], monthly_data["amount"]))
 
-    next_day = df["day"].max() + 1
-    pred = slope * next_day + intercept
+    # Linear regression for prediction
+    monthly_data["timestamp"] = monthly_data["month"].dt.to_timestamp().astype(np.int64) // 10**9
+    X = monthly_data["timestamp"].values
+    y = monthly_data["amount"].values
 
-    return render_template("predict.html", prediction=round(pred, 2))
+    if len(X) < 2:
+        predicted_amount = round(y[-1], 2)
+    else:
+        slope, intercept = np.polyfit(X, y, 1)
+        next_timestamp = X.max() + 30 * 86400  # approximate next month in seconds
+        predicted_amount = round(slope * next_timestamp + intercept, 2)
+
+    # Next month label
+    last_month = monthly_data["month"].max().to_timestamp()
+    next_month = (last_month + pd.DateOffset(months=1)).strftime("%b %Y")
+
+    return render_template("predict.html",
+                           predicted_amount=predicted_amount,
+                           next_month=next_month,
+                           history=history)
+
 
 # ---------------------- RUN APP ----------------------
 if __name__ == '__main__':
