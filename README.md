@@ -4,7 +4,7 @@
 A simple personal expense & income tracker built with **Flask** and **SQLite**.  
 Add / edit / delete entries, filter by today/month/year, export CSV, and view charts (Chart.js) for quick insights.
 
-![screenshot](assets/screenshot.png) 
+![screenshot](assets/.png) 
 
 ## Features
 - Add income and expense entries (type: `income` / `expense`)
